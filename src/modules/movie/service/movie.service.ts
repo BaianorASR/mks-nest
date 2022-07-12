@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Movie } from 'src/database/entities/movie.entity';
 import { Repository } from 'typeorm';
@@ -24,15 +24,20 @@ export class MovieService {
     });
   }
 
-  async findOne(id: number) {
-    return `This action returns a #${id} movie`;
+  async findOne(id: string) {
+    const movie = await this.movieRepository.findOne({ where: { id } });
+
+    if (!movie)
+      throw new HttpException('Movie nor found', HttpStatus.NOT_FOUND);
+
+    return movie;
   }
 
-  async update(id: number, updateMovieDto: UpdateMovieDto) {
+  async update(id: string, updateMovieDto: UpdateMovieDto) {
     return `This action updates a #${id} movie`;
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     return `This action removes a #${id} movie`;
   }
 }

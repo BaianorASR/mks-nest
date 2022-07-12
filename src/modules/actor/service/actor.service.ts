@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Actor } from 'src/database/entities/actor.entity';
-import { Repository } from 'typeorm';
+import { Repository, Like } from 'typeorm';
 
 import { CreateActorDto } from '../DTOs/create-actor.dto';
 import { UpdateActorDto } from '../DTOs/update-actor.dto';
@@ -25,6 +25,17 @@ export class ActorService {
 
   async findOne(id: string) {
     const actor = await this.actorRepository.findOne({ where: { id } });
+
+    if (!actor)
+      throw new HttpException('Actor not found', HttpStatus.NOT_FOUND);
+
+    return actor;
+  }
+
+  async findByName(name: string) {
+    const actor = await this.actorRepository.findOne({
+      where: { name: Like(`%${name}%`) },
+    });
 
     if (!actor)
       throw new HttpException('Actor not found', HttpStatus.NOT_FOUND);

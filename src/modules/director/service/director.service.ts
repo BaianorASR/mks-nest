@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Director } from 'src/database/entities/director.entity';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 
 import { CreateDirectorDto } from '../DTOs/create-director.dto';
 import { UpdateDirectorDto } from '../DTOs/update-director.dto';
@@ -31,6 +31,17 @@ export class DirectorService {
     const director = await this.directorRepository.findOne({ where: { id } });
     if (!director) throw new HttpException('Director not found', 404);
     return director;
+  }
+
+  async findByName(name: string) {
+    const DirectorService = await this.directorRepository.findOne({
+      where: { name: Like(`%${name}%`) },
+    });
+
+    if (!DirectorService)
+      throw new HttpException('Director not found', HttpStatus.NOT_FOUND);
+
+    return DirectorService;
   }
 
   async update(id: string, updateDirectorDto: UpdateDirectorDto) {
