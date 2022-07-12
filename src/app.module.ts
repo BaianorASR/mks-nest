@@ -3,9 +3,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-// import { ActorModule } from './modules/actor/actor.module';
-// import { CategoryModule } from './modules/category/category.module';
+import { ActorModule } from './modules/actor/actor.module';
+import { CategoryModule } from './modules/category/category.module';
 import { DirectorModule } from './modules/director/director.module';
+import { MovieModule } from './modules/movie/movie.module';
 
 @Module({
   imports: [
@@ -16,9 +17,10 @@ import { DirectorModule } from './modules/director/director.module';
       synchronize: true,
       autoLoadEntities: true,
     }),
-    // ActorModule,
-    // CategoryModule,
+    ActorModule,
+    CategoryModule,
     DirectorModule,
+    MovieModule,
   ],
   controllers: [AppController],
   providers: [AppService],

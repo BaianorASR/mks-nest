@@ -3,9 +3,11 @@ import {
   Get,
   Post,
   Body,
-  Patch,
+  Put,
   Param,
   Delete,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import { DirectorService } from '../service/director.service';
 import { CreateDirectorDto } from '../DTOs/create-director.dto';
@@ -16,30 +18,49 @@ export class DirectorController {
   constructor(private readonly directorService: DirectorService) {}
 
   @Post()
-  create(@Body() createDirectorDto: CreateDirectorDto) {
-    return this.directorService.create(createDirectorDto);
+  @HttpCode(HttpStatus.CREATED)
+  async create(
+    @Body()
+    createDirectorDto: CreateDirectorDto,
+  ) {
+    const director = await this.directorService.create(createDirectorDto);
+    return director;
   }
 
   @Get()
-  findAll() {
-    return this.directorService.findAll();
+  @HttpCode(HttpStatus.OK)
+  async findAll() {
+    const directors = await this.directorService.findAll();
+    return directors;
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.directorService.findOne(+id);
+  @HttpCode(HttpStatus.OK)
+  async findOne(
+    @Param('id')
+    id: string,
+  ) {
+    const director = await this.directorService.findOne(id);
+    return director;
   }
 
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateDirectorDto: UpdateDirectorDto,
+  @Put(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async update(
+    @Param('id')
+    id: string,
+    @Body()
+    updateDirectorDto: UpdateDirectorDto,
   ) {
-    return this.directorService.update(+id, updateDirectorDto);
+    await this.directorService.update(id, updateDirectorDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.directorService.remove(+id);
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async remove(
+    @Param('id')
+    id: string,
+  ) {
+    await this.directorService.remove(id);
   }
 }

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Director } from 'src/database/entities/director.entity';
 import { Repository } from 'typeorm';
@@ -13,23 +13,37 @@ export class DirectorService {
     private directorRepository: Repository<Director>,
   ) {}
 
-  create(createDirectorDto: CreateDirectorDto) {
-    return this.directorRepository.save(createDirectorDto);
+  async create(createDirectorDto: CreateDirectorDto) {
+    try {
+      const director = await this.directorRepository.save(createDirectorDto);
+      return director;
+    } catch (error) {
+      throw new HttpException("Can't create director", HttpStatus.BAD_REQUEST);
+    }
   }
 
-  findAll() {
-    return this.directorRepository.find();
+  async findAll() {
+    const directors = await this.directorRepository.find({});
+    return directors;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} director`;
+  async findOne(id: string) {
+    const director = await this.directorRepository.findOne({ where: { id } });
+    if (!director) throw new HttpException('Director not found', 404);
+    return director;
   }
 
-  update(id: number, updateDirectorDto: UpdateDirectorDto) {
-    return `This action updates a #${id} director`;
+  async update(id: string, updateDirectorDto: UpdateDirectorDto) {
+    const { affected } = await this.directorRepository.update(
+      id,
+      updateDirectorDto,
+    );
+
+    if (!affected) throw new HttpException('Director not found', 404);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} director`;
+  async remove(id: string) {
+    const { affected } = await this.directorRepository.delete(id);
+    if (!affected) throw new HttpException('Director not found', 404);
   }
 }
