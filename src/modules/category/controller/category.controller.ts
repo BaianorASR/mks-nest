@@ -24,7 +24,6 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { CategoryResponse } from 'src/documentation/category.res';
-import { ValidationPipe } from 'src/pipes/validation.pipe';
 @ApiTags('categories')
 @Controller('category')
 export class CategoryController {

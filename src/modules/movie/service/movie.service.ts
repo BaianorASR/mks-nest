@@ -1,5 +1,13 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Actor } from 'src/database/entities/actor.entity';
+import { Category } from 'src/database/entities/category.entity';
+import { Director } from 'src/database/entities/director.entity';
 import { Movie } from 'src/database/entities/movie.entity';
 import { Like, Repository } from 'typeorm';
 
@@ -15,9 +23,7 @@ export class MovieService {
   ) {}
 
   async create(createMovieDto: CreateMovieDto) {
-    const movie = this.movieRepository.create(createMovieDto);
-
-    const createdMovie = await this.movieRepository.save(movie);
+    const createdMovie = await this.movieRepository.save(createMovieDto);
     return createdMovie;
   }
 
@@ -67,8 +73,17 @@ export class MovieService {
       throw new HttpException('Movie not exists', HttpStatus.BAD_REQUEST);
   }
 
-  async filter({ year, actor, director, category }: FilterMovieDto) {
-    console.log(year, actor, director, category);
+  async filter(queries: FilterMovieDto) {
+    const queriesArray = Object.keys(queries);
+    if (!queriesArray || queriesArray.length === 0) {
+      throw new BadRequestException('please send a query');
+    }
+
+    if (queriesArray.length > 1) {
+      throw new BadRequestException('only one query at a time');
+    }
+
+    const { year, actor, director, category } = queries;
 
     const movie = await this.movieRepository
       .createQueryBuilder('MOVIES')
@@ -78,7 +93,7 @@ export class MovieService {
       .orWhere('MOVIES.release_year = :year', { year })
       .orWhere('CATEGORY.name = :category', { category })
       .orWhere('ACTOR.name = :actor', { actor })
-      .orWhere('DIRECTOR.name LIKE :name', { director })
+      .orWhere('DIRECTOR.name = :director', { director })
       .getMany();
 
     return movie;

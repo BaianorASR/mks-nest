@@ -93,7 +93,8 @@ export class MovieController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Filter Movie',
-    description: 'Find the Movie by year, director, actor and category',
+    description:
+      'Find the Movie by year, director, actor and category, !! ONLY ONE QUERY CAN BE PASSED !!',
   })
   @ApiQuery({
     name: 'year',
