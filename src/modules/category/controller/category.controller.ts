@@ -10,6 +10,7 @@ import {
   HttpCode,
   ParseUUIDPipe,
   Query,
+  UsePipes,
 } from '@nestjs/common';
 import { CategoryService } from '../service/category.service';
 import { CreateCategoryDto } from '../DTOs/create-category.dto';
@@ -23,6 +24,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { CategoryResponse } from 'src/documentation/category.res';
+import { ValidationPipe } from 'src/pipes/validation.pipe';
 @ApiTags('categories')
 @Controller('category')
 export class CategoryController {
@@ -46,6 +48,7 @@ export class CategoryController {
   // ###################################
 
   @Post()
+  @UsePipes()
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
     summary: 'Create new Category',

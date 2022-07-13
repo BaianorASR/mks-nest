@@ -1,6 +1,5 @@
-import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
-
-import { Movie } from './movie.entity';
+import { IsString } from 'class-validator';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('categories')
 export class Category {
@@ -8,8 +7,6 @@ export class Category {
   id: string;
 
   @Column()
+  @IsString()
   name: string;
-
-  @ManyToMany(() => Movie, (movie) => movie.categories)
-  movies: Movie[];
 }

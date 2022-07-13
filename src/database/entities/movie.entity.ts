@@ -2,9 +2,9 @@ import {
   Column,
   Entity,
   JoinColumn,
+  JoinTable,
   ManyToMany,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -20,28 +20,57 @@ export class Movie {
   @Column('varchar', { unique: true })
   title: string;
 
-  @Column()
+  @Column('varchar')
   description: string;
 
-  @Column('time', { name: 'release_date', default: '2022' })
-  releaseDate: Date;
+  @Column('int', { name: 'release_year' })
+  releaseYear: number;
 
-  @Column()
+  @Column('varchar')
   image: string;
 
-  @Column()
+  @Column('int2')
   rating: number;
 
-  @ManyToOne(() => Director, (director) => director.movies, {
+  @ManyToOne(() => Director, director => director, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })
   @JoinColumn({ name: 'director_id' })
   director: Director;
 
-  @ManyToMany(() => Category, (category) => category.movies)
+  @ManyToMany(() => Category)
+  @JoinTable({
+    name: 'movies_categories',
+    joinColumn: {
+      name: 'movie_id',
+      referencedColumnName: 'id',
+      foreignKeyConstraintName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'category_id',
+      referencedColumnName: 'id',
+      foreignKeyConstraintName: 'id',
+    },
+  })
   categories: Category[];
 
-  @ManyToMany(() => Actor, (actor) => actor.movies)
+  @ManyToMany(() => Actor, {
+    onDelete: 'SET NULL',
+    onUpdate: 'CASCADE',
+  })
+  @JoinTable({
+    name: 'movies_actors',
+    joinColumn: {
+      name: 'movie_id',
+      referencedColumnName: 'id',
+      foreignKeyConstraintName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'actor_id',
+      referencedColumnName: 'id',
+      foreignKeyConstraintName: 'id',
+    },
+  })
   actors: Actor[];
 }

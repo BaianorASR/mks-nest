@@ -1,12 +1,4 @@
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
-
-import { Movie } from './movie.entity';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('directors')
 export class Director {
@@ -15,7 +7,4 @@ export class Director {
 
   @Column()
   name: string;
-
-  @OneToMany(() => Movie, (movie) => movie.director)
-  movies: Movie[];
 }
